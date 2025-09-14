@@ -1,11 +1,11 @@
 {
   "name": "trading-affiliate-dashboard",
   "compatibility_date": "2025-01-08",
+  "main": "src/index.js",
   "build": {
     "command": "npm run build"
   },
   "assets": {
-    "directory": "./dist",
-    "fallback": "index.html"
+    "directory": "./dist"
   }
 }
