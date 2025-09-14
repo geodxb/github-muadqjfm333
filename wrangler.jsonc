@@ -5,6 +5,7 @@
     "command": "npm run build"
   },
   "assets": {
-    "directory": "./dist"
+    "directory": "./dist",
+    "fallback": "index.html"
   }
 }
