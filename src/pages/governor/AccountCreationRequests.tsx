@@ -137,6 +137,76 @@ const AccountCreationRequests = () => {
     setShowImageModal(true);
   };
 
+  const handleViewDocument = (base64Data: string, fileType: string, fileName: string) => {
+    if (fileType === 'application/pdf') {
+      // For PDFs, create a blob and open in new tab
+      try {
+        const byteCharacters = atob(base64Data.split(',')[1] || base64Data);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: fileType });
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+        // Clean up the URL after a delay
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      } catch (error) {
+        console.error('Error opening PDF:', error);
+        alert('Failed to open PDF. Please try downloading instead.');
+      }
+    } else if (fileType.startsWith('image/')) {
+      // For images, use the existing image modal
+      handleImageClick(base64Data, fileName);
+    } else {
+      // For other file types, try to open in new tab
+      try {
+        window.open(base64Data, '_blank');
+      } catch (error) {
+        console.error('Error opening document:', error);
+        alert('Failed to open document. Please try downloading instead.');
+      }
+    }
+  };
+
+  const handleDownloadDocument = (base64Data: string, fileType: string, fileName: string) => {
+    try {
+      let blob;
+      if (base64Data.startsWith('data:')) {
+        // Handle data URL format
+        const byteCharacters = atob(base64Data.split(',')[1]);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        blob = new Blob([byteArray], { type: fileType });
+      } else {
+        // Handle raw base64
+        const byteCharacters = atob(base64Data);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        blob = new Blob([byteArray], { type: fileType });
+      }
+      
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error downloading document:', error);
+      alert('Failed to download document. Please try again.');
+    }
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pending': return 'text-yellow-600 bg-yellow-100';
@@ -381,7 +451,7 @@ const AccountCreationRequests = () => {
                 <User size={20} className="mr-2" />
                 PERSONAL INFORMATION
               </h3>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Full Name</label>
                   <p className="font-bold text-gray-900">{selectedRequest.applicantName}</p>
@@ -409,13 +479,59 @@ const AccountCreationRequests = () => {
               </div>
             </div>
 
+            {/* Request Details */}
+            <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
+              <h3 className="text-lg font-bold text-gray-900 mb-4 uppercase tracking-wide flex items-center">
+                <Calendar size={20} className="mr-2" />
+                REQUEST DETAILS
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Requested By</label>
+                  <p className="font-bold text-gray-900">{selectedRequest.requestedByName}</p>
+                  <p className="text-xs text-gray-600">ID: {selectedRequest.requestedBy}</p>
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Request Date</label>
+                  <p className="font-bold text-gray-900">
+                    {new Date(selectedRequest.requestedAt).toLocaleDateString('en-US', {
+                      weekday: 'long',
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
+                  </p>
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Agreement Accepted</label>
+                  <p className="font-bold text-gray-900">
+                    {selectedRequest.agreementAccepted ? 'YES' : 'NO'}
+                  </p>
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Agreement Date</label>
+                  <p className="font-bold text-gray-900">
+                    {new Date(selectedRequest.agreementAcceptedAt).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
+                  </p>
+                </div>
+              </div>
+            </div>
+
             {/* Financial Information */}
             <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
               <h3 className="text-lg font-bold text-gray-900 mb-4 uppercase tracking-wide flex items-center">
                 <DollarSign size={20} className="mr-2" />
                 FINANCIAL INFORMATION
               </h3>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Initial Deposit</label>
                   <p className="font-bold text-gray-900 text-xl">${selectedRequest.initialDeposit?.toLocaleString()}</p>
@@ -433,15 +549,19 @@ const AccountCreationRequests = () => {
                 <Building size={20} className="mr-2" />
                 BANKING INFORMATION
               </h3>
-              <div className="grid grid-cols-2 gap-4">
-                {Object.entries(selectedRequest.bankDetails || {}).map(([key, value]) => (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {Object.entries(selectedRequest.bankDetails || {}).map(([key, value]) => {
+                  // Format the key for display
+                  const displayKey = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+                  return (
                   <div key={key}>
                     <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-                      {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
+                      {displayKey}
                     </label>
-                    <p className="font-bold text-gray-900">{value || 'N/A'}</p>
+                    <p className="font-bold text-gray-900">{String(value) || 'N/A'}</p>
                   </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
 
@@ -449,79 +569,193 @@ const AccountCreationRequests = () => {
             <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
               <h3 className="text-lg font-bold text-gray-900 mb-4 uppercase tracking-wide flex items-center">
                 <Shield size={20} className="mr-2" />
-                UPLOADED DOCUMENTS
+                VERIFICATION DOCUMENTS
               </h3>
-              <div className="grid grid-cols-2 gap-6">
+              <div className="space-y-6">
                 {/* Identity Document */}
                 <div>
-                  <label className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2 block">
-                    Identity Document ({selectedRequest.identityDocument?.type?.replace('_', ' ').toUpperCase()})
-                  </label>
+                  <div className="bg-white p-4 rounded-lg border border-gray-300">
+                    <h4 className="font-bold text-gray-900 mb-3 uppercase tracking-wide flex items-center">
+                      <FileText size={16} className="mr-2 text-blue-600" />
+                      IDENTITY DOCUMENT ({selectedRequest.identityDocument?.type?.replace('_', ' ').toUpperCase()})
+                    </h4>
                   {selectedRequest.identityDocument?.base64Data ? (
-                    <div className="space-y-2">
-                      {selectedRequest.identityDocument.fileType.startsWith('image/') ? (
-                        <img
-                          src={selectedRequest.identityDocument.base64Data}
-                          alt="Identity Document"
-                          className="w-full h-48 object-cover rounded-lg border border-gray-200 cursor-pointer hover:opacity-80 transition-opacity"
-                          onClick={() => handleImageClick(
-                            selectedRequest.identityDocument.base64Data,
-                            `Identity Document - ${selectedRequest.applicantName}`
-                          )}
-                        />
-                      ) : (
-                        <div className="w-full h-48 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center">
-                          <div className="text-center">
-                            <FileText size={32} className="mx-auto text-gray-400 mb-2" />
-                            <p className="text-gray-600 font-medium uppercase tracking-wide">
-                              {selectedRequest.identityDocument.fileName}
-                            </p>
-                          </div>
+                    <div className="space-y-4">
+                      {/* Document Details */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">File Name</label>
+                          <p className="font-bold text-gray-900">{selectedRequest.identityDocument.fileName}</p>
+                        </div>
+                        <div>
+                          <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">File Type</label>
+                          <p className="font-bold text-gray-900">{selectedRequest.identityDocument.fileType}</p>
+                        </div>
+                        <div>
+                          <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">File Size</label>
+                          <p className="font-bold text-gray-900">
+                            {(selectedRequest.identityDocument.fileSize / 1024 / 1024).toFixed(2)} MB
+                          </p>
+                        </div>
+                        <div>
+                          <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Upload Date</label>
+                          <p className="font-bold text-gray-900">
+                            {new Date(selectedRequest.identityDocument.uploadedAt).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Base64 URL Display */}
+                      <div>
+                        <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Document URL</label>
+                        <div className="bg-gray-100 p-2 rounded border border-gray-300 font-mono text-xs break-all">
+                          {selectedRequest.identityDocument.base64Data.substring(0, 100)}...
+                          <span className="text-gray-500">
+                            ({selectedRequest.identityDocument.base64Data.length} characters)
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Document Preview */}
+                      {selectedRequest.identityDocument.fileType.startsWith('image/') && (
+                        <div>
+                          <label className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2 block">Document Preview</label>
+                          <img
+                            src={selectedRequest.identityDocument.base64Data}
+                            alt="Identity Document"
+                            className="w-full max-w-md h-48 object-cover rounded-lg border border-gray-200 cursor-pointer hover:opacity-80 transition-opacity"
+                            onClick={() => handleViewDocument(
+                              selectedRequest.identityDocument.base64Data,
+                              selectedRequest.identityDocument.fileType,
+                              `Identity Document - ${selectedRequest.applicantName}`
+                            )}
+                          />
                         </div>
                       )}
-                      <p className="text-xs text-gray-500 uppercase tracking-wide">
-                        Size: {(selectedRequest.identityDocument.fileSize / 1024 / 1024).toFixed(2)} MB
-                      </p>
+
+                      {/* Action Buttons */}
+                      <div className="flex space-x-3">
+                        <button
+                          onClick={() => handleViewDocument(
+                            selectedRequest.identityDocument.base64Data,
+                            selectedRequest.identityDocument.fileType,
+                            selectedRequest.identityDocument.fileName
+                          )}
+                          className="px-4 py-2 bg-blue-600 text-white font-bold hover:bg-blue-700 transition-colors rounded-lg uppercase tracking-wide flex items-center space-x-2"
+                        >
+                          <Eye size={16} />
+                          <span>VIEW DOCUMENT</span>
+                        </button>
+                        <button
+                          onClick={() => handleDownloadDocument(
+                            selectedRequest.identityDocument.base64Data,
+                            selectedRequest.identityDocument.fileType,
+                            selectedRequest.identityDocument.fileName
+                          )}
+                          className="px-4 py-2 bg-gray-600 text-white font-bold hover:bg-gray-700 transition-colors rounded-lg uppercase tracking-wide flex items-center space-x-2"
+                        >
+                          <Download size={16} />
+                          <span>DOWNLOAD</span>
+                        </button>
+                      </div>
                     </div>
                   ) : (
-                    <p className="text-gray-500 uppercase tracking-wide">No document uploaded</p>
+                    <p className="text-gray-500 uppercase tracking-wide">NO IDENTITY DOCUMENT UPLOADED</p>
                   )}
+                  </div>
                 </div>
 
                 {/* Proof of Deposit */}
                 <div>
-                  <label className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2 block">
-                    Proof of Deposit
-                  </label>
+                  <div className="bg-white p-4 rounded-lg border border-gray-300">
+                    <h4 className="font-bold text-gray-900 mb-3 uppercase tracking-wide flex items-center">
+                      <FileText size={16} className="mr-2 text-green-600" />
+                      PROOF OF DEPOSIT
+                    </h4>
                   {selectedRequest.proofOfDeposit?.base64Data ? (
-                    <div className="space-y-2">
-                      {selectedRequest.proofOfDeposit.fileType.startsWith('image/') ? (
-                        <img
-                          src={selectedRequest.proofOfDeposit.base64Data}
-                          alt="Proof of Deposit"
-                          className="w-full h-48 object-cover rounded-lg border border-gray-200 cursor-pointer hover:opacity-80 transition-opacity"
-                          onClick={() => handleImageClick(
-                            selectedRequest.proofOfDeposit.base64Data,
-                            `Proof of Deposit - ${selectedRequest.applicantName}`
-                          )}
-                        />
-                      ) : (
-                        <div className="w-full h-48 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center">
-                          <div className="text-center">
-                            <FileText size={32} className="mx-auto text-gray-400 mb-2" />
-                            <p className="text-gray-600 font-medium uppercase tracking-wide">
-                              {selectedRequest.proofOfDeposit.fileName}
-                            </p>
-                          </div>
+                    <div className="space-y-4">
+                      {/* Document Details */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">File Name</label>
+                          <p className="font-bold text-gray-900">{selectedRequest.proofOfDeposit.fileName}</p>
+                        </div>
+                        <div>
+                          <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">File Type</label>
+                          <p className="font-bold text-gray-900">{selectedRequest.proofOfDeposit.fileType}</p>
+                        </div>
+                        <div>
+                          <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">File Size</label>
+                          <p className="font-bold text-gray-900">
+                            {(selectedRequest.proofOfDeposit.fileSize / 1024 / 1024).toFixed(2)} MB
+                          </p>
+                        </div>
+                        <div>
+                          <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Upload Date</label>
+                          <p className="font-bold text-gray-900">
+                            {new Date(selectedRequest.proofOfDeposit.uploadedAt).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Base64 URL Display */}
+                      <div>
+                        <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Document URL</label>
+                        <div className="bg-gray-100 p-2 rounded border border-gray-300 font-mono text-xs break-all">
+                          {selectedRequest.proofOfDeposit.base64Data.substring(0, 100)}...
+                          <span className="text-gray-500">
+                            ({selectedRequest.proofOfDeposit.base64Data.length} characters)
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Document Preview */}
+                      {selectedRequest.proofOfDeposit.fileType.startsWith('image/') && (
+                        <div>
+                          <label className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2 block">Document Preview</label>
+                          <img
+                            src={selectedRequest.proofOfDeposit.base64Data}
+                            alt="Proof of Deposit"
+                            className="w-full max-w-md h-48 object-cover rounded-lg border border-gray-200 cursor-pointer hover:opacity-80 transition-opacity"
+                            onClick={() => handleViewDocument(
+                              selectedRequest.proofOfDeposit.base64Data,
+                              selectedRequest.proofOfDeposit.fileType,
+                              `Proof of Deposit - ${selectedRequest.applicantName}`
+                            )}
+                          />
                         </div>
                       )}
-                      <p className="text-xs text-gray-500 uppercase tracking-wide">
-                        Size: {(selectedRequest.proofOfDeposit.fileSize / 1024 / 1024).toFixed(2)} MB
-                      </p>
+
+                      {/* Action Buttons */}
+                      <div className="flex space-x-3">
+                        <button
+                          onClick={() => handleViewDocument(
+                            selectedRequest.proofOfDeposit.base64Data,
+                            selectedRequest.proofOfDeposit.fileType,
+                            selectedRequest.proofOfDeposit.fileName
+                          )}
+                          className="px-4 py-2 bg-green-600 text-white font-bold hover:bg-green-700 transition-colors rounded-lg uppercase tracking-wide flex items-center space-x-2"
+                        >
+                          <Eye size={16} />
+                          <span>VIEW DOCUMENT</span>
+                        </button>
+                        <button
+                          onClick={() => handleDownloadDocument(
+                            selectedRequest.proofOfDeposit.base64Data,
+                            selectedRequest.proofOfDeposit.fileType,
+                            selectedRequest.proofOfDeposit.fileName
+                          )}
+                          className="px-4 py-2 bg-gray-600 text-white font-bold hover:bg-gray-700 transition-colors rounded-lg uppercase tracking-wide flex items-center space-x-2"
+                        >
+                          <Download size={16} />
+                          <span>DOWNLOAD</span>
+                        </button>
+                      </div>
                     </div>
                   ) : (
-                    <p className="text-gray-500 uppercase tracking-wide">No document uploaded</p>
+                    <p className="text-gray-500 uppercase tracking-wide">NO PROOF OF DEPOSIT UPLOADED</p>
                   )}
+                  </div>
                 </div>
               </div>
             </div>
