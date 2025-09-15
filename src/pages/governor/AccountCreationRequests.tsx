@@ -75,6 +75,8 @@ const AccountCreationRequests = () => {
     setError('');
 
     try {
+      console.log('🔄 Governor approving account creation request:', selectedRequest.id);
+      
       await GovernorService.approveAccountCreation(
         selectedRequest.id,
         user.id,
@@ -82,12 +84,19 @@ const AccountCreationRequests = () => {
         approvalConditions.length > 0 ? approvalConditions : undefined
       );
       
+      console.log('✅ Account creation approved successfully');
+      
       await loadRequests();
       setShowReviewModal(false);
       setSelectedRequest(null);
+      setApprovalConditions([]);
+      
+      // Show success message
+      alert(`ACCOUNT APPROVED SUCCESSFULLY\n\nInvestor: ${selectedRequest.applicantName}\nInitial Deposit: $${selectedRequest.initialDeposit.toLocaleString()}\n\nThe new investor account has been created and activated.`);
     } catch (err) {
       console.error('Error approving request:', err);
-      setError('Failed to approve account creation');
+      setError(`Failed to approve account creation: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      alert(`APPROVAL FAILED\n\nError: ${err instanceof Error ? err.message : 'Unknown error'}\n\nPlease try again or contact technical support.`);
     } finally {
       setIsProcessing(false);
     }

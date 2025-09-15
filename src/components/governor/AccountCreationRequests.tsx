@@ -79,11 +79,15 @@ const AccountCreationRequests = ({ isOpen, onClose }: AccountCreationRequestsPro
     try {
       await GovernorService.approveAccountCreation(
         selectedRequest.id,
+      console.log('🔄 Governor approving account creation request:', selectedRequest.id);
+      
         user.id,
         user.name,
         approvalConditions.split(',').map(cond => cond.trim()).filter(cond => cond)
       );
       setSelectedRequest(null);
+      console.log('✅ Account creation approved successfully');
+      
       setApprovalConditions('');
       fetchRequests(); // Refresh list
     } catch (error) {
@@ -106,11 +110,16 @@ const AccountCreationRequests = ({ isOpen, onClose }: AccountCreationRequestsPro
         rejectionReason: rejectionReason
       });
       setSelectedRequest(null);
+      setApprovalConditions([]);
+      
+      // Show success message
+      alert(`ACCOUNT APPROVED SUCCESSFULLY\n\nInvestor: ${selectedRequest.applicantName}\nInitial Deposit: $${selectedRequest.initialDeposit.toLocaleString()}\n\nThe new investor account has been created and activated.`);
       setRejectionReason('');
       fetchRequests(); // Refresh list
     } catch (error) {
       console.error('Error rejecting request:', error);
-      alert('Failed to reject request. Please try again.');
+      setError(`Failed to approve account creation: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      alert(`APPROVAL FAILED\n\nError: ${err instanceof Error ? err.message : 'Unknown error'}\n\nPlease try again or contact technical support.`);
     } finally {
       setProcessingRequest(null);
     }

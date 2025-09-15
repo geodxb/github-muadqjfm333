@@ -848,7 +848,7 @@ export class FirestoreService {
   }
 
   // Add document to collection
-  static async addDoc(collectionName: string, data: any): Promise<string> {
+  static async addDocument(collectionName: string, data: any): Promise<string> {
     try {
       console.log(`🔥 Firebase: Adding document to ${collectionName}...`);
       const docRef = await addDoc(collection(db, collectionName), {

@@ -366,9 +366,8 @@ export class GovernorService {
       const requestData = requestDoc.data() as AccountCreationRequest;
       
       // Create the investor account
-      const investorId = `investor_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      const investorId = doc(collection(db, 'users')).id; // Use Firebase auto-generated ID
       const investorData = {
-        id: investorId,
         name: requestData.applicantName,
         email: requestData.applicantEmail,
         phone: requestData.applicantPhone || '',
@@ -381,27 +380,8 @@ export class GovernorService {
         accountType: requestData.accountType,
         isActive: true,
         accountStatus: conditions && conditions.length > 0 ? 'Active - Conditional Approval' : 'Active',
-        bankDetails: requestData.bankDetails,
-        uploadedDocuments: [
-          {
-            id: `identity_${Date.now()}`,
-            name: requestData.identityDocument.fileName,
-            type: requestData.identityDocument.fileType,
-            size: requestData.identityDocument.fileSize,
-            url: requestData.identityDocument.base64Data,
-            uploadedAt: requestData.identityDocument.uploadedAt,
-            documentType: 'identity'
-          },
-          {
-            id: `deposit_${Date.now()}`,
-            name: requestData.proofOfDeposit.fileName,
-            type: requestData.proofOfDeposit.fileType,
-            size: requestData.proofOfDeposit.fileSize,
-            url: requestData.proofOfDeposit.base64Data,
-            uploadedAt: requestData.proofOfDeposit.uploadedAt,
-            documentType: 'proof_of_deposit'
-          }
-        ],
+        bankDetails: requestData.bankDetails || {},
+        uploadedDocuments: [],
         accountFlags: {
           governorApproved: true,
           approvalConditions: conditions || [],
@@ -411,6 +391,31 @@ export class GovernorService {
         createdAt: new Date(),
         updatedAt: new Date()
       };
+      
+      // Handle uploaded documents if they exist
+      if (requestData.identityDocument) {
+        investorData.uploadedDocuments.push({
+          id: `identity_${Date.now()}`,
+          name: requestData.identityDocument.fileName,
+          type: requestData.identityDocument.fileType,
+          size: requestData.identityDocument.fileSize,
+          url: requestData.identityDocument.base64Data,
+          uploadedAt: requestData.identityDocument.uploadedAt,
+          documentType: 'identity'
+        });
+      }
+      
+      if (requestData.proofOfDeposit) {
+        investorData.uploadedDocuments.push({
+          id: `deposit_${Date.now()}`,
+          name: requestData.proofOfDeposit.fileName,
+          type: requestData.proofOfDeposit.fileType,
+          size: requestData.proofOfDeposit.fileSize,
+          url: requestData.proofOfDeposit.base64Data,
+          uploadedAt: requestData.proofOfDeposit.uploadedAt,
+          documentType: 'proof_of_deposit'
+        });
+      }
       
       const batch = writeBatch(db);
       
