@@ -77,10 +77,10 @@ const AccountCreationRequests = ({ isOpen, onClose }: AccountCreationRequestsPro
 
     setProcessingRequest(selectedRequest.id);
     try {
-      await GovernorService.approveAccountCreation(
-        selectedRequest.id,
       console.log('🔄 Governor approving account creation request:', selectedRequest.id);
       
+      await GovernorService.approveAccountCreation(
+        selectedRequest.id,
         user.id,
         user.name,
         approvalConditions.split(',').map(cond => cond.trim()).filter(cond => cond)
