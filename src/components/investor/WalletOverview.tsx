@@ -13,15 +13,17 @@ const WalletOverview = ({ initialDeposit, currentBalance }: WalletOverviewProps)
   const isPositive = gainLoss >= 0;
   
   return (
+    <div>
           <p className="text-sm font-medium text-gray-600 uppercase tracking-wide">Current Balance</p>
-          <p className="text-2xl font-bold text-gray-900">${balance.toLocaleString()}</p>
+          <p className="text-2xl font-bold text-gray-900">${currentBalance.toLocaleString()}</p>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <p className="text-sm font-medium text-gray-600 uppercase tracking-wide">Total Invested</p>
-          <p className="text-2xl font-bold text-blue-600">${totalInvested.toLocaleString()}</p>
+          <p className="text-2xl font-bold text-blue-600">${initialDeposit.toLocaleString()}</p>
+          <div>
               <p className="text-sm font-medium text-gray-600">Initial Deposit</p>
-              <DollarSign size={16} className="text-gray-400" />
+              <Wallet size={16} className="text-gray-400" />
             </div>
             <p className="text-2xl font-bold text-gray-900">${initialDeposit.toLocaleString()}</p>
           </motion.div>
@@ -59,18 +61,28 @@ const WalletOverview = ({ initialDeposit, currentBalance }: WalletOverviewProps)
                 {isPositive ? '+' : ''}${gainLoss.toLocaleString()}
               </p>
               <div className="inline-flex items-center px-2 py-1 rounded-lg text-sm font-medium bg-gray-100 text-gray-700">
-                {isPositive ? 
+                {isPositive ? '+' : ''}{percentChange.toFixed(2)}%
+              </div>
+            </div>
+          </motion.div>
+        </div>
+        <div>
           <p className="text-sm font-medium text-gray-600 uppercase tracking-wide">Pending Withdrawals</p>
-          <p className="text-2xl font-bold text-orange-600">${pendingWithdrawals.toLocaleString()}</p>
+          <p className="text-2xl font-bold text-orange-600">${0}</p>
         </div>
       </div>
     </div>
           <p className="text-sm font-medium text-gray-600 uppercase tracking-wide">Total Returns</p>
-          <p className={`text-2xl font-bold ${totalReturns >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-            ${totalReturns.toLocaleString()}
+          <p className={`text-2xl font-bold ${gainLoss >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+            ${gainLoss.toLocaleString()}
           </p>
-          {totalReturns >= 0 ? (
+          {gainLoss >= 0 ? (
             <TrendingUp className="h-4 w-4 text-green-600 inline ml-2" />
           ) : (
             <TrendingDown className="h-4 w-4 text-red-600 inline ml-2" />
           )}
+    </div>
+  );
+};
+
+export default WalletOverview;
