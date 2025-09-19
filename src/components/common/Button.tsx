@@ -30,5 +30,3 @@ const Button = ({ children, variant = 'primary', isLoading, className = '', ...p
 };
 
 export default Button;
-
-export default Button

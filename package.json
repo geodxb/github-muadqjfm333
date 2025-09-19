@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "chart.js": "^4.4.2",
+    "date-fns": "^4.1.0",
     "firebase": "^10.14.0",
     "framer-motion": "^11.1.12",
     "html2canvas": "^1.4.1",

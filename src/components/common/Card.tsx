@@ -18,5 +18,3 @@ const Card = ({ children, title, className = '' }: CardProps) => {
 };
 
 export default Card;
-
-export default Card
