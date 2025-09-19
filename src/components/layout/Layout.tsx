@@ -6,10 +6,13 @@
  
  interface LayoutProps {
    children: React.ReactNode;
+ }
 @@ -8,11 +6,8 @@
  
  const Layout: React.FC<LayoutProps> = ({ children }) => {
    return (
+   )
+ }
 -    <div className="min-h-screen bg-gray-50">
 +    <div className="min-h-screen bg-gray-100">
        <Header />

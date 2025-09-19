@@ -1,107 +1,36 @@
-import { ReactNode, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import Button from './Button';
-import { X } from 'lucide-react';
-
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
-  children: ReactNode;
-  footer?: ReactNode;
-  size?: 'sm' | 'md' | 'lg';
+  children: React.ReactNode;
+  size?: 'sm' | 'md' | 'lg' | 'xl';
 }
 
-const Modal = ({ 
-  isOpen, 
-  onClose, 
-  title, 
-  children, 
-  footer,
-  size = 'md'
-}: ModalProps) => {
-  // Close modal on escape key press
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose();
-      }
-    };
-    
-    window.addEventListener('keydown', handleEscape);
-    return () => window.removeEventListener('keydown', handleEscape);
-  }, [isOpen, onClose]);
-  
-  // Prevent scrolling when modal is open
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [isOpen]);
-  
-  // Size mapping
+const Modal = ({ isOpen, onClose, title, children, size = 'md' }: ModalProps) => {
+  if (!isOpen) return null;
+
   const sizeClasses = {
     sm: 'max-w-md',
-    md: 'max-w-lg',
-    lg: 'max-w-2xl'
+    md: 'max-w-lg', 
+    lg: 'max-w-2xl',
+    xl: 'max-w-4xl'
   };
-  
+
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <div className="fixed inset-0 z-50 overflow-y-auto">
-          <div className="flex min-h-screen items-center justify-center p-4 text-center">
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              onClick={onClose}
-              className="fixed inset-0 bg-black/20 backdrop-blur-sm"
-            />
-            
-            {/* Modal content */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              transition={{ duration: 0.2 }}
-              className={`relative w-full ${sizeClasses[size]} bg-white rounded-2xl shadow-xl overflow-hidden`}
-            >
-              {/* Header */}
-              <div className="px-6 py-5 border-b border-gray-100 flex justify-between items-center">
-                <h3 className="text-xl font-semibold text-gray-900">{title}</h3>
-                <button
-                  onClick={onClose}
-                  className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
-                  aria-label="Close modal"
-                >
-                  <X size={18} className="text-gray-500" />
-                </button>
-              </div>
-              
-              {/* Body */}
-              <div className="px-6 py-6">{children}</div>
-              
-              {/* Footer */}
-              {footer && (
-                <div className="px-6 py-4 border-t border-gray-100 bg-gray-50">
-                  {footer}
-                </div>
-              )}
-            </motion.div>
-          </div>
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+      <div className={`bg-white rounded-lg shadow-xl w-full ${sizeClasses[size]} max-h-[90vh] overflow-y-auto`}>
+        <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+          <h3 className="text-xl font-semibold text-gray-900 uppercase tracking-wide">{title}</h3>
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+            <span className="text-2xl">×</span>
+          </button>
         </div>
-      )}
-    </AnimatePresence>
+        <div className="p-6">{children}</div>
+      </div>
+    </div>
   );
 };
 
 export default Modal;
+
+export default Modal
