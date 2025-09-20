@@ -1,202 +1,251 @@
-import React, { useState } from 'react';
-import MainLayout from './components/layout/MainLayout';
-import Windows95Window from './components/common/Windows95Window';
-import Windows95Button from './components/common/Windows95Button';
-import Windows95Input from './components/common/Windows95Input';
-import Windows95Select from './components/common/Windows95Select';
-import Windows95Table from './components/common/Windows95Table';
-import Windows95Tabs from './components/common/Windows95Tabs';
-import Windows95Dialog from './components/common/Windows95Dialog';
-import './styles/windows95.css';
+import React, { useEffect, useState } from 'react';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { useAuth } from './contexts/AuthContext';
+import LoadingScreen from './components/common/LoadingScreen';
+import ShadowBanCheck from './components/investor/ShadowBanCheck';
+import ProtectedRoute from './components/auth/ProtectedRoute';
+import PinEntryScreen from './pages/auth/PinEntryScreen';
+
+// Auth pages
+import AdminLogin from './pages/auth/AdminLogin';
+import AffiliateLogin from './pages/auth/AffiliateLogin';
+
+// Admin pages
+import AdminDashboard from './pages/admin/Dashboard';
+import InvestorsListPage from './pages/admin/InvestorsList';
+import InvestorProfile from './pages/admin/InvestorProfile';
+import WithdrawalsPage from './pages/admin/WithdrawalsPage';
+import CommissionsPage from './pages/admin/CommissionsPage';
+import TransactionsPage from './pages/admin/TransactionsPage';
+import AnalyticsPage from './pages/admin/AnalyticsPage';
+import PerformanceReportsPage from './pages/admin/PerformanceReportsPage';
+import SettingsPage from './pages/admin/SettingsPage';
+import MessagesPage from './pages/admin/MessagesPage';
+import EnhancedMessagesPage from './pages/admin/EnhancedMessagesPage';
+
+// Investor pages
+import InvestorDashboard from './pages/investor/Dashboard';
+
+// Governor pages
+import GovernorDashboard from './pages/governor/Dashboard';
+import GovernorInvestorsPage from './pages/governor/InvestorsPage';
+import GovernorInvestorProfile from './pages/governor/InvestorProfile';
+import GovernorWithdrawalsPage from './pages/governor/WithdrawalsPage';
+import GovernorAccountManagementPage from './pages/governor/AccountManagementPage';
+import GovernorDeletionApprovalsPage from './pages/governor/DeletionApprovalsPage';
+import GovernorMessagesPage from './pages/governor/MessagesPage';
+import GovernorEnhancedMessagesPage from './pages/governor/EnhancedMessagesPage';
+import GovernorConfigPage from './pages/governor/ConfigPage';
+import GovernorSecurityPage from './pages/governor/SecurityPage';
+import GovernorLogsPage from './pages/governor/LogsPage';
+import GovernorSystemMonitoringPage from './pages/governor/SystemMonitoringPage';
+import GovernorSystemControlsPage from './pages/governor/SystemControlsPage';
+import GovernorDatabasePage from './pages/governor/DatabasePage';
+import GovernorSupportTicketsPage from './pages/governor/SupportTicketsPage';
+import AccountCreationRequests from './pages/governor/AccountCreationRequests';
 
 function App() {
-  const [selectedTab, setSelectedTab] = useState('users');
-  const [selectedRow, setSelectedRow] = useState<number | null>(null);
-  const [showDialog, setShowDialog] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    role: 'user',
-    status: 'active'
-  });
+  const { user, isLoading } = useAuth();
+  const [isPinAuthenticated, setIsPinAuthenticated] = useState(false);
+  const [targetPath, setTargetPath] = useState<string>('/login');
+  const location = useLocation();
 
-  // Sample data for demonstration
-  const userData = [
-    { id: 1, name: 'John Doe', email: 'john@example.com', role: 'Admin', status: 'Active', lastLogin: '2024-01-15' },
-    { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'User', status: 'Active', lastLogin: '2024-01-14' },
-    { id: 3, name: 'Bob Johnson', email: 'bob@example.com', role: 'User', status: 'Inactive', lastLogin: '2024-01-10' },
-    { id: 4, name: 'Alice Brown', email: 'alice@example.com', role: 'Manager', status: 'Active', lastLogin: '2024-01-15' }
-  ];
-
-  const userColumns = [
-    { key: 'id', title: 'ID', width: '60px' },
-    { key: 'name', title: 'Name', width: '150px' },
-    { key: 'email', title: 'Email', width: '200px' },
-    { key: 'role', title: 'Role', width: '100px' },
-    { key: 'status', title: 'Status', width: '80px' },
-    { key: 'lastLogin', title: 'Last Login', width: '120px' }
-  ];
-
-  const roleOptions = [
-    { value: 'user', label: 'User' },
-    { value: 'admin', label: 'Admin' },
-    { value: 'manager', label: 'Manager' }
-  ];
-
-  const statusOptions = [
-    { value: 'active', label: 'Active' },
-    { value: 'inactive', label: 'Inactive' }
-  ];
-
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
-  const handleSave = () => {
-    console.log('Saving data:', formData);
-    setShowDialog(true);
-  };
-
-  const tabs = [
-    {
-      key: 'users',
-      label: 'User Management',
-      content: (
-        <div className="space-y-4">
-          <div className="win95-flex win95-flex-between win95-gap-4">
-            <div className="win95-flex win95-gap-2">
-              <Windows95Button>Add User</Windows95Button>
-              <Windows95Button disabled={selectedRow === null}>Edit User</Windows95Button>
-              <Windows95Button variant="danger" disabled={selectedRow === null}>Delete User</Windows95Button>
-            </div>
-            <div className="win95-flex win95-gap-2">
-              <Windows95Input placeholder="Search users..." className="w-48" />
-              <Windows95Button>Search</Windows95Button>
-            </div>
-          </div>
-          
-          <Windows95Table
-            columns={userColumns}
-            data={userData}
-            selectedRowIndex={selectedRow}
-            onRowClick={(record, index) => setSelectedRow(index)}
-            className="h-64"
-          />
-        </div>
-      )
-    },
-    {
-      key: 'settings',
-      label: 'Settings',
-      content: (
-        <div className="space-y-4">
-          <div className="win95-groupbox">
-            <div className="win95-groupbox-title">User Information</div>
-            <div className="space-y-2">
-              <Windows95Input
-                label="Full Name"
-                value={formData.name}
-                onChange={(e) => handleInputChange('name', e.target.value)}
-                placeholder="Enter full name"
-              />
-              <Windows95Input
-                label="Email"
-                type="email"
-                value={formData.email}
-                onChange={(e) => handleInputChange('email', e.target.value)}
-                placeholder="Enter email address"
-              />
-              <Windows95Select
-                label="Role"
-                options={roleOptions}
-                value={formData.role}
-                onChange={(e) => handleInputChange('role', e.target.value)}
-              />
-              <Windows95Select
-                label="Status"
-                options={statusOptions}
-                value={formData.status}
-                onChange={(e) => handleInputChange('status', e.target.value)}
-              />
-            </div>
-          </div>
-          
-          <div className="win95-flex win95-gap-2">
-            <Windows95Button variant="primary" onClick={handleSave}>
-              Save Changes
-            </Windows95Button>
-            <Windows95Button>
-              Cancel
-            </Windows95Button>
-            <Windows95Button>
-              Reset
-            </Windows95Button>
-          </div>
-        </div>
-      )
-    },
-    {
-      key: 'reports',
-      label: 'Reports',
-      content: (
-        <div className="space-y-4">
-          <div className="win95-panel-raised p-4">
-            <h3 className="win95-text win95-text-bold mb-2">System Reports</h3>
-            <div className="space-y-2">
-              <div className="win95-flex win95-flex-between">
-                <span className="win95-text">Total Users:</span>
-                <span className="win95-text win95-text-bold">{userData.length}</span>
-              </div>
-              <div className="win95-flex win95-flex-between">
-                <span className="win95-text">Active Users:</span>
-                <span className="win95-text win95-text-bold">
-                  {userData.filter(u => u.status === 'Active').length}
-                </span>
-              </div>
-              <div className="win95-flex win95-flex-between">
-                <span className="win95-text">Inactive Users:</span>
-                <span className="win95-text win95-text-bold">
-                  {userData.filter(u => u.status === 'Inactive').length}
-                </span>
-              </div>
-            </div>
-          </div>
-          
-          <div className="win95-flex win95-gap-2">
-            <Windows95Button>Generate Report</Windows95Button>
-            <Windows95Button>Export Data</Windows95Button>
-            <Windows95Button>Print</Windows95Button>
-          </div>
-        </div>
-      )
+  // Check PIN authentication on app load
+  useEffect(() => {
+    const pinAuth = sessionStorage.getItem('pin_authenticated');
+    const redirectPath = sessionStorage.getItem('login_redirect_path');
+    
+    if (pinAuth === 'true') {
+      setIsPinAuthenticated(true);
+      if (redirectPath) {
+        setTargetPath(redirectPath);
+      }
     }
-  ];
+  }, []);
+
+  const handlePinAuthenticated = (path?: string) => {
+    setIsPinAuthenticated(true);
+    if (path) {
+      setTargetPath(path);
+      window.location.href = path;
+    }
+  };
+
+  // Show PIN entry screen if not authenticated
+  if (!isPinAuthenticated) {
+    return <PinEntryScreen onAuthenticated={handlePinAuthenticated} />;
+  }
+
+  // Show loading screen while checking authentication
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
 
   return (
-    <MainLayout>
-      <Windows95Window 
-        title="Management System v1.0"
-        className="h-full"
-      >
-        <Windows95Tabs
-          tabs={tabs}
-          activeTab={selectedTab}
-          onTabChange={setSelectedTab}
-          className="h-full"
-        />
-      </Windows95Window>
-
-      <Windows95Dialog
-        title="Information"
-        isOpen={showDialog}
-        onClose={() => setShowDialog(false)}
-        type="info"
-      >
-        <p className="win95-text">
-          Your changes have been saved successfully!
-        </p>
-      </Windows95Dialog>
-    </MainLayout>
+    <div className="App">
+      <Routes>
+        {/* Auth Routes */}
+        <Route path="/login" element={<AdminLogin />} />
+        <Route path="/affiliate-login" element={<AffiliateLogin />} />
+        
+        {/* Admin Routes */}
+        <Route path="/admin" element={
+          <ProtectedRoute role="admin">
+            <AdminDashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/investors" element={
+          <ProtectedRoute role="admin">
+            <InvestorsListPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/investor/:id" element={
+          <ProtectedRoute role="admin">
+            <InvestorProfile />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/withdrawals" element={
+          <ProtectedRoute role="admin">
+            <WithdrawalsPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/commissions" element={
+          <ProtectedRoute role="admin">
+            <CommissionsPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/transactions" element={
+          <ProtectedRoute role="admin">
+            <TransactionsPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/analytics" element={
+          <ProtectedRoute role="admin">
+            <AnalyticsPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/performance-reports" element={
+          <ProtectedRoute role="admin">
+            <PerformanceReportsPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/settings" element={
+          <ProtectedRoute role="admin">
+            <SettingsPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/messages" element={
+          <ProtectedRoute role="admin">
+            <EnhancedMessagesPage />
+          </ProtectedRoute>
+        } />
+        
+        {/* Investor Routes */}
+        <Route path="/investor" element={
+          <ProtectedRoute role="investor">
+            <ShadowBanCheck>
+              <InvestorDashboard />
+            </ShadowBanCheck>
+          </ProtectedRoute>
+        } />
+        <Route path="/investor/messages" element={
+          <ProtectedRoute role="investor">
+            <ShadowBanCheck>
+              <MessagesPage />
+            </ShadowBanCheck>
+          </ProtectedRoute>
+        } />
+        
+        {/* Governor Routes */}
+        <Route path="/governor" element={
+          <ProtectedRoute role="governor">
+            <GovernorDashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/governor/investors" element={
+          <ProtectedRoute role="governor">
+            <GovernorInvestorsPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/governor/investor/:id" element={
+          <ProtectedRoute role="governor">
+            <GovernorInvestorProfile />
+          </ProtectedRoute>
+        } />
+        <Route path="/governor/withdrawals" element={
+          <ProtectedRoute role="governor">
+            <GovernorWithdrawalsPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/governor/account-management" element={
+          <ProtectedRoute role="governor">
+            <GovernorAccountManagementPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/governor/deletion-approvals" element={
+          <ProtectedRoute role="governor">
+            <GovernorDeletionApprovalsPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/governor/messages" element={
+          <ProtectedRoute role="governor">
+            <GovernorEnhancedMessagesPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/governor/config" element={
+          <ProtectedRoute role="governor">
+            <GovernorConfigPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/governor/security" element={
+          <ProtectedRoute role="governor">
+            <GovernorSecurityPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/governor/logs" element={
+          <ProtectedRoute role="governor">
+            <GovernorLogsPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/governor/system-monitoring" element={
+          <ProtectedRoute role="governor">
+            <GovernorSystemMonitoringPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/governor/system-controls" element={
+          <ProtectedRoute role="governor">
+            <GovernorSystemControlsPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/governor/database" element={
+          <ProtectedRoute role="governor">
+            <GovernorDatabasePage />
+          </ProtectedRoute>
+        } />
+        <Route path="/governor/support-tickets" element={
+          <ProtectedRoute role="governor">
+            <GovernorSupportTicketsPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/governor/account-requests" element={
+          <ProtectedRoute role="governor">
+            <AccountCreationRequests />
+          </ProtectedRoute>
+        } />
+        
+        {/* Default redirects */}
+        <Route path="/" element={
+          user ? (
+            <Navigate to={
+              user.role === 'governor' ? '/governor' :
+              user.role === 'admin' ? '/admin' : '/investor'
+            } replace />
+          ) : (
+            <Navigate to="/login" replace />
+          )
+        } />
+      </Routes>
+    </div>
   );
 }
 
