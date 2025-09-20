@@ -6,41 +6,46 @@ import { FirestoreService } from '../../services/firestoreService';
 import { useAuth } from '../../contexts/AuthContext';
 import { Ban, CheckCircle } from 'lucide-react';
 import ProWithdrawalMethods from './ProWithdrawalMethods'; // Import the ProWithdrawalMethods component
+import { Investor } from '../../types/user'; // Import Investor type
 
 interface WithdrawModalProps {
   isOpen: boolean;
   onClose: () => void;
   currentBalance: number;
   onSuccess?: () => void;
+  investor?: Investor; // Make investor prop optional for backward compatibility
 }
 
-const WithdrawModal = ({ isOpen, onClose, currentBalance, onSuccess }: WithdrawModalProps) => {
+const WithdrawModal = ({ isOpen, onClose, currentBalance, onSuccess, investor }: WithdrawModalProps) => {
   const { user } = useAuth();
   const [amount, setAmount] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   
+  // Determine the actual investor context: if passed as prop, use it; otherwise, use the logged-in user
+  const currentInvestorContext = investor || user;
+
   const validateAmount = () => {
     const numAmount = parseFloat(amount);
     if (isNaN(numAmount) || numAmount <= 0) {
-      setError('Please enter a valid amount');
-      return false;
+      return 'Please enter a valid amount';
     }
     
     if (numAmount > currentBalance) {
-      setError('Withdrawal amount cannot exceed your current balance');
-      return false;
+      return 'Withdrawal amount cannot exceed your current balance';
     }
     
-    setError('');
-    return true;
+    if (numAmount < 100) {
+      return 'Minimum withdrawal amount is $100';
+    }
+    return '';
   };
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!validateAmount() || !user) {
+    if (!validateAmount() || !currentInvestorContext) {
       return;
     }
     
@@ -53,8 +58,8 @@ const WithdrawModal = ({ isOpen, onClose, currentBalance, onSuccess }: WithdrawM
     
     try {
       await FirestoreService.addWithdrawalRequest(
-        user.id,
-        user.name,
+        currentInvestorContext.id,
+        currentInvestorContext.name,
         withdrawalAmount
       );
       
@@ -105,10 +110,10 @@ const WithdrawModal = ({ isOpen, onClose, currentBalance, onSuccess }: WithdrawM
           </div>
         }
       >
-        {user?.accountType === 'Pro' ? (
+        {currentInvestorContext?.accountType === 'Pro' ? (
           // Render ProWithdrawalMethods directly for Pro accounts
           <ProWithdrawalMethods
-            investor={user} // Pass the user object as investor
+            investor={currentInvestorContext} // Pass the investor context
             currentBalance={currentBalance}
             onSuccess={onSuccess}
             onCancel={onClose} // Use onClose as onCancel for the Pro methods modal
@@ -167,10 +172,8 @@ const WithdrawModal = ({ isOpen, onClose, currentBalance, onSuccess }: WithdrawM
                   className="flex-1 px-4 py-3 bg-gray-900 text-white font-medium hover:bg-gray-800 transition-colors rounded-lg disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wide"
                 >
                   {isLoading ? (
-                    <div className="flex items-center justify-center">
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                      REQUESTING WITHDRAWAL...
-                    </div>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                    REQUESTING WITHDRAWAL...
                   ) : (
                     'REQUEST WITHDRAWAL'
                   )}
