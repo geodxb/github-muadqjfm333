@@ -204,7 +204,6 @@ const DashboardLayout = ({ children, title }: DashboardLayoutProps) => {
                    onClick={() => setSupportChatOpen(true)}
                    className="flex items-center space-x-2 text-sm text-gray-600 hover:text-blue-600 transition-colors whitespace-nowrap"
                  >
-                   <MessageCircle size={16} />
                    <span className="hidden lg:inline font-medium">Support</span>
                  </button>
                </div>
@@ -215,7 +214,6 @@ const DashboardLayout = ({ children, title }: DashboardLayoutProps) => {
                 onClick={handleLogout}
                className="flex items-center space-x-1 text-sm text-gray-600 hover:text-gray-800 transition-colors"
               >
-                <User size={16} />
                <span className="hidden sm:inline font-medium text-xs lg:text-sm truncate max-w-16 lg:max-w-none">{user?.name}</span>
               </button>
 
@@ -224,7 +222,7 @@ const DashboardLayout = ({ children, title }: DashboardLayoutProps) => {
                 onClick={() => setSidebarOpen(true)}
                 className="lg:hidden text-gray-500 hover:text-gray-700"
               >
-                <Menu size={24} />
+                <span className="text-xl">☰</span>
               </button>
             </div>
           </div>
@@ -322,12 +320,10 @@ const DashboardLayout = ({ children, title }: DashboardLayoutProps) => {
                   {user?.role === 'admin' && (
                     <button
                       onClick={() => {
-                        handleNavigation(item.path);
                         setSidebarOpen(false);
                       }}
                       className="flex items-center w-full text-gray-600 hover:text-blue-600 transition-colors mb-3"
                     >
-                      <HelpCircle size={18} className="mr-3" />
                       <span className="font-medium">Support Chat</span>
                     </button>
                   )}
@@ -335,7 +331,6 @@ const DashboardLayout = ({ children, title }: DashboardLayoutProps) => {
                     onClick={handleLogout}
                     className="flex items-center w-full text-gray-600 hover:text-red-600 transition-colors"
                   >
-                    <LogOut size={18} className="mr-3" />
                     <span className="font-medium">Logout</span>
                   </button>
                 </div>
@@ -359,12 +354,6 @@ const DashboardLayout = ({ children, title }: DashboardLayoutProps) => {
               }`}
             >
               {/* Icons for each nav item */}
-              {item.text === 'Dashboard' && <Users size={16} />}
-              {item.text === 'Messages' && <MessageSquare size={16} />}
-              {item.text === 'Holdings' && <DollarSign size={16} />}
-              {item.text === 'Reports' && <Users size={16} />}
-              {item.text === 'Planning' && <DollarSign size={16} />}
-              {item.text === 'Profile' && <User size={16} />}
               <span className="font-medium truncate max-w-12">{item.text}</span>
             </button>
           ))}
@@ -375,7 +364,6 @@ const DashboardLayout = ({ children, title }: DashboardLayoutProps) => {
               onClick={() => setSidebarOpen(true)}
               className="flex flex-col items-center space-y-1 px-2 py-2 text-xs text-gray-600"
             >
-              <Menu size={16} />
               <span className="font-medium">More</span>
             </button>
           )}

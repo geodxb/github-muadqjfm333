@@ -165,7 +165,6 @@ const GovernorLayout = ({ children, title }: GovernorLayoutProps) => {
                 onClick={handleLogout}
                 className="flex items-center space-x-2 text-sm text-gray-600 hover:text-black transition-colors whitespace-nowrap"
               >
-                <span className="w-4 h-4 bg-gray-600 flex items-center justify-center text-white text-xs">U</span>
                 <span className="hidden md:inline font-medium">{user?.name}</span>
               </button>
 
@@ -269,7 +268,6 @@ const GovernorLayout = ({ children, title }: GovernorLayoutProps) => {
                     onClick={handleLogout}
                     className="flex items-center w-full text-gray-600 hover:text-black transition-colors"
                   >
-                    <span className="mr-3 w-4 h-4 bg-gray-600 flex items-center justify-center text-white text-xs">↪</span>
                     <span className="font-medium">Logout</span>
                   </button>
                 </div>
