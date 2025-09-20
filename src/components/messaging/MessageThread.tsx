@@ -322,7 +322,8 @@ const MessageThread = ({ conversationId, recipientName }: MessageThreadProps) =>
                         
                         if (isImage) {
                           return (
-                            <div key={index} className="space-y-2">
+                            <>
+                              <div key={index} className="space-y-2">
                               <div className="flex items-center justify-between mb-2">
                                 <div className="flex items-center space-x-2">
                                   <Image size={16} className="text-blue-600" />
@@ -335,28 +336,25 @@ const MessageThread = ({ conversationId, recipientName }: MessageThreadProps) =>
                                 </div>
                                 <button
                                   onClick={() => {
-                                <div className="flex items-center space-x-1">
-                                  <button
-                                    onClick={() => {
-                                      const link = document.createElement('a');
-                                      link.href = attachmentData.url;
-                                      link.download = attachmentData.name;
-                                      document.body.appendChild(link);
-                                      link.click();
-                                      document.body.removeChild(link);
-                                    }}
-                                    className="p-1 text-gray-600 hover:text-gray-800 transition-colors"
-                                    title="Download image"
-                                  >
-                                    <Download size={14} />
-                                  </button>
-                                </div>
+                                    const link = document.createElement('a');
+                                    link.href = attachmentData.url;
+                                    link.download = attachmentData.name;
+                                    document.body.appendChild(link);
+                                    link.click();
+                                    document.body.removeChild(link);
+                                  }}
+                                  className="p-1 text-gray-600 hover:text-gray-800 transition-colors"
+                                  title="Download image"
+                                >
+                                  <Download size={14} />
+                                </button>
                               </div>
                               <div className="border border-gray-200 rounded-lg overflow-hidden bg-gray-50">
                                 <img 
                                   src={attachmentData.url} 
                                   alt={attachmentData.name}
                                   className="w-full h-auto max-h-64 object-contain cursor-pointer"
+                                  onError={(e) => {
                                     const target = e.target as HTMLImageElement;
                                     target.style.display = 'none';
                                     if (target.parentElement) {
@@ -365,7 +363,8 @@ const MessageThread = ({ conversationId, recipientName }: MessageThreadProps) =>
                                   }}
                                 />
                               </div>
-                            </div>
+                              </div>
+                            </>
                           );
                         } else {
                           return (
@@ -379,43 +378,6 @@ const MessageThread = ({ conversationId, recipientName }: MessageThreadProps) =>
                                   </p>
                                 </div>
                               </div>
-                            </div>
-                            <div className="flex items-center space-x-1">
-                             {/* Only show view button for PDFs and documents */}
-                             {(attachmentData.type?.includes('pdf') || 
-                               attachmentData.type?.includes('document') || 
-                               attachmentData.type?.includes('text')) && (
-                              <button
-                                onClick={() => {
-                                 try {
-                                  // Handle base64 data URLs and regular URLs
-                                  const url = attachmentData.url;
-                                  if (url.startsWith('data:')) {
-                                    // For base64 data, create a blob and open it
-                                    const byteCharacters = atob(url.split(',')[1]);
-                                    const byteNumbers = new Array(byteCharacters.length);
-                                    for (let i = 0; i < byteCharacters.length; i++) {
-                                      byteNumbers[i] = byteCharacters.charCodeAt(i);
-                                    }
-                                    const byteArray = new Uint8Array(byteNumbers);
-                                    const blob = new Blob([byteArray], { type: attachmentData.type || 'application/pdf' });
-                                    const blobUrl = URL.createObjectURL(blob);
-                                    window.open(blobUrl, '_blank');
-                                  } else {
-                                    window.open(url, '_blank');
-                                  }
-                                 } catch (error) {
-                                   console.error('Error opening document:', error);
-                                   alert('Failed to open document. Please try downloading instead.');
-                                 }
-                                }}
-                                className="p-1 text-gray-600 hover:text-gray-800"
-                                title="View document"
-                              >
-                                <Eye size={14} />
-                              </button>
-                             )}
-                              <button
                               <div className="flex items-center space-x-1">
                                 {isPDF && (
                                   <button
