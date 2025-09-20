@@ -4,6 +4,7 @@ import { CryptoExchangeService } from '../../services/cryptoExchangeService';
 import { CryptoWithdrawal, CreditCardWithdrawal } from '../../types/withdrawal';
 import { FirestoreService } from '../../services/firestoreService';
 import { Investor } from '../../types/user';
+import { useAuth } from '../../contexts/AuthContext'; // <--- ADD THIS LINE
 import {
   DollarSign,
   AlertCircle,
@@ -31,7 +32,7 @@ interface ProWithdrawalMethodsProps {
 }
 
 type WithdrawalMethod = 'bank' | 'crypto' | 'credit_card';
-type CryptoType = 'BTC' | 'ETH' | 'USDT' | 'SOL';
+type CryptoType = 'BTC' | 'ETH' | 'XRP' | 'USDT';
 type USDTNetwork = 'TRC20' | 'ERC20' | 'BEP20';
 
 // Enhanced bank data for the 5 specified countries
