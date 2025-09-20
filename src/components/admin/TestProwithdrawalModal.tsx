@@ -1,4 +1,3 @@
-// src/components/admin/TestProWithdrawalModal.tsx
 import React from 'react';
 import Modal from '../common/Modal';
 import ProWithdrawalMethods from '../investor/ProWithdrawalMethods';
