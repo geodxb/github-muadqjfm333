@@ -74,9 +74,12 @@ service cloud.firestore {
       allow read: if isAdmin();
     }
     
-    match /accountCreationRequests/{document} {
-      allow read, write: if isGovernor();
-      allow read: if isAdmin();
+    // Account Creation Requests
+    match /accountCreationRequests/{requestId} {
+      // Allow creation by admin or governor
+      allow create: if isAdmin() || isGovernor();
+      // Allow read/update by admin or governor
+      allow read, update: if isAdmin() || isGovernor();
     }
     
     // Audit Logs - Governor only access
@@ -89,20 +92,13 @@ service cloud.firestore {
       // Any authenticated user can read their own profile (needed for role determination)
       allow read: if request.auth != null && request.auth.uid == userId;
       
-      // Governor: Full access to all user profiles
-      allow read, write: if isGovernor();
+      // Governor: Full access to all user profiles (read, write, create, delete)
+      allow write: if isGovernor(); // This covers create, update, delete
+      allow read: if isGovernor();
 
-    // Account Creation Requests
-    match /accountCreationRequests/{requestId} {
-      allow create: if request.auth != null && 
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
-      allow read, update: if request.auth != null && 
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'governor'];
-    }
-      
       // Admin: Can read all investor profiles, create new investors, update existing investors
       allow read: if isAdmin();
-      allow create: if isAdmin() && resource.data.role == 'investor';
+      allow create: if isAdmin() && request.resource.data.role == 'investor'; // Admin can create investor users
       allow update: if isAdmin() && 
                        resource.data.role == 'investor' &&
                        // Prevent admins from modifying sensitive fields
