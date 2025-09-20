@@ -5,6 +5,7 @@ import WithdrawalRestrictionCheck from './WithdrawalRestrictionCheck';
 import { FirestoreService } from '../../services/firestoreService';
 import { useAuth } from '../../contexts/AuthContext';
 import { Ban, CheckCircle } from 'lucide-react';
+import ProWithdrawalMethods from './ProWithdrawalMethods';
 
 interface WithdrawModalProps {
   isOpen: boolean;
@@ -19,6 +20,7 @@ const WithdrawModal = ({ isOpen, onClose, currentBalance, onSuccess }: WithdrawM
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [showProMethods, setShowProMethods] = useState(false);
   
   const validateAmount = () => {
     const numAmount = parseFloat(amount);
@@ -43,13 +45,24 @@ const WithdrawModal = ({ isOpen, onClose, currentBalance, onSuccess }: WithdrawM
       return;
     }
     
+    // For Pro accounts, show advanced withdrawal methods
+    if (user.accountType === 'Pro') {
+      setShowProMethods(true);
+      return;
+    }
+
+    // Standard withdrawal for Basic accounts
+    await processStandardWithdrawal(parseFloat(amount));
+  };
+
+  const processStandardWithdrawal = async (withdrawalAmount: number) => {
     setIsLoading(true);
     
     try {
       await FirestoreService.addWithdrawalRequest(
         user.id,
         user.name,
-        parseFloat(amount)
+        withdrawalAmount
       );
       
       setIsLoading(false);
@@ -68,6 +81,16 @@ const WithdrawModal = ({ isOpen, onClose, currentBalance, onSuccess }: WithdrawM
       setIsLoading(false);
     }
   };
+
+  const handleProWithdrawalSuccess = () => {
+    setShowProMethods(false);
+    setAmount('');
+    onClose();
+  };
+
+  const handleProWithdrawalCancel = () => {
+    setShowProMethods(false);
+  };
   
   const handleClose = () => {
     setAmount('');
@@ -82,6 +105,14 @@ const WithdrawModal = ({ isOpen, onClose, currentBalance, onSuccess }: WithdrawM
       onClose={handleClose}
       title="REQUEST WITHDRAWAL"
     >
+      {showProMethods ? (
+        <ProWithdrawalMethods
+          investor={user}
+          amount={parseFloat(amount)}
+          onSuccess={handleProWithdrawalSuccess}
+          onCancel={handleProWithdrawalCancel}
+        />
+      ) : (
       <WithdrawalRestrictionCheck
         fallback={
           <div className="text-center py-8 bg-gray-50 border border-gray-300 rounded-lg">
@@ -131,6 +162,14 @@ const WithdrawModal = ({ isOpen, onClose, currentBalance, onSuccess }: WithdrawM
               <p className="mt-2 text-sm text-gray-700 font-medium uppercase tracking-wide bg-gray-100 p-2 rounded border border-gray-300">{error}</p>
             )}
           </div>
+
+          {user?.accountType === 'Pro' && (
+            <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <p className="text-blue-800 text-sm font-medium uppercase tracking-wide">
+                PRO ACCOUNT: Additional withdrawal methods available (Crypto & Credit Card)
+              </p>
+            </div>
+          )}
           
           <div className="bg-gray-50 border border-gray-300 rounded-lg p-4 mb-6">
             <p className="text-gray-700 text-sm font-medium uppercase tracking-wide">
@@ -157,7 +196,7 @@ const WithdrawModal = ({ isOpen, onClose, currentBalance, onSuccess }: WithdrawM
                   REQUESTING WITHDRAWAL...
                 </div>
               ) : (
-                'REQUEST WITHDRAWAL'
+                user?.accountType === 'Pro' ? 'CONTINUE' : 'REQUEST WITHDRAWAL'
               )}
             </button>
           </div>
@@ -180,6 +219,7 @@ const WithdrawModal = ({ isOpen, onClose, currentBalance, onSuccess }: WithdrawM
         </div>
       )}
       </WithdrawalRestrictionCheck>
+      )}
     </Modal>
   );
 };
