@@ -180,6 +180,9 @@ const bankFormFields: Record<string, any> = {
 };
 
 const ProWithdrawalMethods = ({ investor, currentBalance, onSuccess, onCancel }: ProWithdrawalMethodsProps) => {
+  // Add this console.log to confirm the component is being rendered
+  console.log('ProWithdrawalMethods component is rendering.');
+
   const { user } = useAuth();
   const [selectedMethod, setSelectedMethod] = useState<WithdrawalMethod>('bank');
   const [isLoading, setIsLoading] = useState(false);
@@ -924,6 +927,11 @@ const ProWithdrawalMethods = ({ investor, currentBalance, onSuccess, onCancel }:
 
   return (
     <div className="p-6">
+      {/* Temporary visual indicator */}
+      <div className="bg-green-100 border border-green-400 text-green-800 p-2 mb-4 text-center font-bold uppercase">
+        PRO WITHDRAWAL METHODS LOADED
+      </div>
+
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-bold text-gray-900 uppercase tracking-wide">
           PRO WITHDRAWAL METHODS
