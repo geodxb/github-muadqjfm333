@@ -1,4 +1,3 @@
-// src/pages/admin/WithdrawalsPage.tsx
 import { useState } from 'react';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import Card from '../../components/common/Card';
