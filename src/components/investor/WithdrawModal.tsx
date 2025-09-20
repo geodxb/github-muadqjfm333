@@ -1,4 +1,3 @@
-// src/components/investor/WithdrawModal.tsx
 import { useState } from 'react';
 import Modal from '../common/Modal';
 import Button from '../common/Button';
@@ -26,6 +25,11 @@ const WithdrawModal = ({ isOpen, onClose, currentBalance, onSuccess, investor }:
   
   // Determine the actual investor context: if passed as prop, use it; otherwise, use the logged-in user
   const currentInvestorContext = investor || user;
+
+  // Add these console.log statements for debugging
+  console.log('WithdrawModal opened. currentInvestorContext:', currentInvestorContext);
+  console.log('Account Type being evaluated:', currentInvestorContext?.accountType);
+  console.log('Is accountType === "Pro"?', currentInvestorContext?.accountType === 'Pro');
 
   const validateAmount = () => {
     const numAmount = parseFloat(amount);
