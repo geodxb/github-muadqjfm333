@@ -279,7 +279,6 @@ const WithdrawalFlagModal = ({
             disabled={!comment.trim() || isLoading}
             className="flex-1"
           >
-            <Flag size={16} className="mr-2" />
             {isLoading ? 'SUBMITTING REQUEST...' : 'SUBMIT FLAG REQUEST'}
           </Button>
         </div>

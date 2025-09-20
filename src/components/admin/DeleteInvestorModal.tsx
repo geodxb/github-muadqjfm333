@@ -187,9 +187,6 @@ const DeleteInvestorModal = ({
               <div>
                 <p className="text-gray-600 font-medium uppercase tracking-wide mb-1">EMAIL</p>
                 <p className="font-bold text-gray-900">{investor.email || 'N/A'}</p>
-              </div>
-              <div>
-                <p className="text-gray-600 font-medium uppercase tracking-wide mb-1">COUNTRY</p>
                 <p className="font-bold text-gray-900">{investor.country}</p>
               </div>
               <div>
@@ -197,9 +194,6 @@ const DeleteInvestorModal = ({
                 <p className="font-bold text-gray-900">${investor.currentBalance.toLocaleString()}</p>
               </div>
             </div>
-          </div>
-        </div>
-
         {/* Industrial Balance Warning */}
         {investor.currentBalance > 0 && (
           <div className="bg-white border border-gray-300 rounded-lg">
@@ -207,9 +201,6 @@ const DeleteInvestorModal = ({
               <div className="flex items-center space-x-2">
                 <DollarSign size={20} className="text-gray-700" />
                 <h4 className="font-bold text-gray-900 uppercase tracking-wide">FUND TRANSFER REQUIRED</h4>
-              </div>
-            </div>
-            <div className="p-6">
               <div className="bg-gray-50 p-4 border border-gray-200 rounded-lg">
                 <p className="text-gray-800 text-sm font-medium uppercase tracking-wide mb-3">
                   This account has a balance of ${investor.currentBalance.toLocaleString()}. 
@@ -217,9 +208,6 @@ const DeleteInvestorModal = ({
                 </p>
                 <div className="grid grid-cols-2 gap-4 text-xs">
                   <div>
-                    <p className="text-gray-600 uppercase tracking-wide">TRANSFER METHOD</p>
-                    <p className="font-bold text-gray-900">Bank Transfer</p>
-                  </div>
                   <div>
                     <p className="text-gray-600 uppercase tracking-wide">PROCESSING TIME</p>
                     <p className="font-bold text-gray-900">60-90 Days Maximum</p>

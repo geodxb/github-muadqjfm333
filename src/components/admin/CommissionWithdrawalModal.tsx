@@ -309,7 +309,6 @@ const CommissionWithdrawalModal = ({
                 disabled={isLoading || selectedAccount === 'new'}
                 className="flex-1 px-4 py-3 bg-gray-900 text-white font-medium hover:bg-gray-800 transition-colors rounded-lg disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wide"
               >
-                <Banknote size={18} className="mr-2 inline" />
                 {isLoading ? (
                   <div className="flex items-center justify-center">
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>

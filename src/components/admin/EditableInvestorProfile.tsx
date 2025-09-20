@@ -140,7 +140,6 @@ const EditableInvestorProfile = ({ investor, onUpdate }: EditableInvestorProfile
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-wide">
-                    <User size={16} className="inline mr-1" />
                     FULL NAME
                   </label>
                   <input
@@ -154,7 +153,6 @@ const EditableInvestorProfile = ({ investor, onUpdate }: EditableInvestorProfile
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-wide">
-                    <Mail size={16} className="inline mr-1" />
                     EMAIL ADDRESS
                   </label>
                   <input
@@ -167,7 +165,6 @@ const EditableInvestorProfile = ({ investor, onUpdate }: EditableInvestorProfile
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-wide">
-                    <Phone size={16} className="inline mr-1" />
                     PHONE NUMBER
                   </label>
                   <input
@@ -180,7 +177,6 @@ const EditableInvestorProfile = ({ investor, onUpdate }: EditableInvestorProfile
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-wide">
-                    <MapPin size={16} className="inline mr-1" />
                     COUNTRY
                   </label>
                   <select
@@ -290,7 +286,6 @@ const EditableInvestorProfile = ({ investor, onUpdate }: EditableInvestorProfile
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1 uppercase tracking-wide">
-                      <User size={16} className="inline mr-1" />
                       FULL NAME
                     </label>
                     <p className="text-gray-900 font-medium">{investor.name}</p>
@@ -298,7 +293,6 @@ const EditableInvestorProfile = ({ investor, onUpdate }: EditableInvestorProfile
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1 uppercase tracking-wide">
-                      <MapPin size={16} className="inline mr-1" />
                       COUNTRY
                     </label>
                     <p className="text-gray-900 font-medium">{investor.country}</p>
@@ -306,7 +300,6 @@ const EditableInvestorProfile = ({ investor, onUpdate }: EditableInvestorProfile
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1 uppercase tracking-wide">
-                      <Calendar size={16} className="inline mr-1" />
                       MEMBER SINCE
                     </label>
                     <p className="text-gray-900 font-medium">{investor.joinDate}</p>
@@ -315,7 +308,6 @@ const EditableInvestorProfile = ({ investor, onUpdate }: EditableInvestorProfile
                   {investor.email && (
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1 uppercase tracking-wide">
-                        <Mail size={16} className="inline mr-1" />
                         EMAIL ADDRESS
                       </label>
                       <p className="text-gray-900 font-medium">{investor.email}</p>
@@ -325,7 +317,6 @@ const EditableInvestorProfile = ({ investor, onUpdate }: EditableInvestorProfile
                   {investor.phone && (
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1 uppercase tracking-wide">
-                        <Phone size={16} className="inline mr-1" />
                         PHONE NUMBER
                       </label>
                       <p className="text-gray-900 font-medium">{investor.phone}</p>
@@ -349,7 +340,6 @@ const EditableInvestorProfile = ({ investor, onUpdate }: EditableInvestorProfile
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1 uppercase tracking-wide">
-                      <DollarSign size={16} className="inline mr-1" />
                       INITIAL DEPOSIT
                     </label>
                     <p className="text-gray-900 font-bold text-lg">${investor.initialDeposit.toLocaleString()}</p>
@@ -357,7 +347,6 @@ const EditableInvestorProfile = ({ investor, onUpdate }: EditableInvestorProfile
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1 uppercase tracking-wide">
-                      <TrendingUp size={16} className="inline mr-1" />
                       CURRENT BALANCE
                     </label>
                     <p className="text-gray-900 font-bold text-xl">${investor.currentBalance.toLocaleString()}</p>
