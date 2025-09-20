@@ -322,7 +322,6 @@ const MessagesPage = () => {
           </div>
         )}
       </div>
-      </div>
     </DashboardLayout>
   );
 };
