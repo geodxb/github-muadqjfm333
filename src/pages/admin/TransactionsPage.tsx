@@ -198,6 +198,7 @@ const TransactionsPage = () => {
             <button
               onClick={() => window.location.reload()}
               className="px-4 py-2 bg-gray-900 text-white font-medium hover:bg-gray-800 transition-colors rounded-lg"
+            >
               Retry
             </button>
           </div>
