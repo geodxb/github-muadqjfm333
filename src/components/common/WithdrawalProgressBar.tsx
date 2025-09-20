@@ -553,7 +553,6 @@ const WithdrawalProgressBar = ({
               onClick={() => setShowFlagModal(true)}
               className="w-full"
             >
-              <Flag size={16} className="mr-2" />
               Mark as Priority
             </Button>
           </div>
@@ -564,7 +563,6 @@ const WithdrawalProgressBar = ({
           <div className="mb-6">
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <div className="flex items-center space-x-2">
-                <Flag size={16} className="text-blue-600" />
                 <span className="text-blue-800 font-medium text-sm uppercase tracking-wide">
                   Priority request submitted
                 </span>
@@ -1167,7 +1165,6 @@ const WithdrawalProgressBar = ({
               disabled={!flagComment.trim() || isFlagging}
               className="flex-1"
             >
-              <Flag size={16} className="mr-2" />
               {isFlagging ? 'SUBMITTING REQUEST...' : 'SUBMIT PRIORITY REQUEST'}
             </Button>
           </div>

@@ -372,7 +372,6 @@ const PerformanceReportsPage = () => {
                 onClick={generateReport}
                 className="px-4 py-2 bg-gray-900 text-white text-sm font-medium hover:bg-gray-800 transition-colors rounded-lg uppercase tracking-wide"
               >
-                <Download size={16} className="mr-2 inline" />
                 EXPORT REPORT
               </button>
             </div>
@@ -403,7 +402,6 @@ const PerformanceReportsPage = () => {
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 >
-                  {report.icon}
                   <span>{report.label}</span>
                 </button>
               ))}

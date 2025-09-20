@@ -96,7 +96,6 @@ const WithdrawModal = ({ isOpen, onClose, currentBalance, onSuccess }: WithdrawM
               onClick={handleClose}
               className="px-6 py-3 bg-gray-900 text-white font-medium hover:bg-gray-800 transition-colors rounded-lg uppercase tracking-wide"
             >
-              CLOSE
             </button>
           </div>
         }

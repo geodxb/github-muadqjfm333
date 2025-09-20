@@ -468,7 +468,6 @@ const SettingsPage = () => {
           {activeTab !== 'platform' && (
             <div className="mt-6 flex justify-end space-x-4">
               <button className="px-4 py-2 bg-white border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition-colors rounded-lg uppercase tracking-wide">
-                <RefreshCw size={18} className="mr-2 inline" />
                 RESET
               </button>
               <button
@@ -476,7 +475,6 @@ const SettingsPage = () => {
                 disabled={isLoading}
                 className="px-4 py-2 bg-gray-900 text-white font-medium hover:bg-gray-800 transition-colors rounded-lg uppercase tracking-wide disabled:opacity-50"
               >
-                <Save size={18} className="mr-2 inline" />
                 {isSaved ? 'SAVED!' : 'SAVE CHANGES'}
               </button>
             </div>

@@ -300,7 +300,6 @@ const CommissionsPage = () => {
               disabled={filteredCommissions.length === 0}
               className="px-3 py-2 border border-gray-300 rounded text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Download size={14} className="mr-1 inline" />
               Export
             </button>
             <button
@@ -308,7 +307,6 @@ const CommissionsPage = () => {
               disabled={totalCommissions < 100}
               className="px-4 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Banknote size={14} className="mr-1 inline" />
               Withdraw
             </button>
           </div>

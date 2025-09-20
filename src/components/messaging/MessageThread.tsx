@@ -17,7 +17,8 @@ import {
   FileText,
   X,
   Eye,
-  Download
+  Download,
+  Image
 } from 'lucide-react';
 
 interface MessageThreadProps {

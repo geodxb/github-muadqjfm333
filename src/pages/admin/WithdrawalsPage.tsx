@@ -387,7 +387,6 @@ const WithdrawalsPage = () => {
               setShowWithdrawalForm(true);
             }}
           >
-            <Plus size={18} className="mr-2" />
             New Withdrawal Request
           </Button>
         </div>

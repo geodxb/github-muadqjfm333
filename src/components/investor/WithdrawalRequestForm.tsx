@@ -843,7 +843,6 @@ const WithdrawalRequestForm = ({
             }
             className="w-full px-6 py-3 bg-gray-900 text-white font-medium hover:bg-gray-800 transition-colors rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <ArrowDownRight size={16} className="mr-2 inline" />
             {isLoading ? 'Processing...' : 
              !selectedBank && availableBanks.length > 0 ? 'Select Bank to Continue' :
              getBankFormValidationError() ? 'Complete Bank Details' :

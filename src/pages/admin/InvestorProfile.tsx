@@ -404,7 +404,6 @@ const InvestorProfile = () => {
           onClick={() => navigate('/admin/investors')}
           className="mb-4 px-3 py-2 bg-white border border-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-50 transition-colors rounded-lg"
         >
-          <ChevronLeft size={16} className="mr-1 inline" />
           Back to Investors
         </button>
         
@@ -470,7 +469,6 @@ const InvestorProfile = () => {
                   onClick={() => setAddCreditModalOpen(true)}
                   className="px-4 py-2 bg-gray-900 text-white font-medium hover:bg-gray-800 transition-colors rounded-lg"
                 >
-                  <PlusCircle size={18} className="mr-2 inline" />
                   Add Credit
                 </button>
               </div>
