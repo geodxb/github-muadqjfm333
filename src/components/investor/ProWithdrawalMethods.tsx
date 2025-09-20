@@ -1,4 +1,3 @@
-// src/components/investor/ProWithdrawalMethods.tsx
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { CryptoExchangeService } from '../../services/cryptoExchangeService';
