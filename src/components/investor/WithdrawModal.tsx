@@ -1,3 +1,4 @@
+// src/components/investor/WithdrawModal.tsx
 import { useState } from 'react';
 import Modal from '../common/Modal';
 import Button from '../common/Button';
@@ -172,8 +173,10 @@ const WithdrawModal = ({ isOpen, onClose, currentBalance, onSuccess, investor }:
                   className="flex-1 px-4 py-3 bg-gray-900 text-white font-medium hover:bg-gray-800 transition-colors rounded-lg disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wide"
                 >
                   {isLoading ? (
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                    REQUESTING WITHDRAWAL...
+                    <div className="flex items-center justify-center">
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                      <span>REQUESTING WITHDRAWAL...</span> {/* Corrected line */}
+                    </div>
                   ) : (
                     'REQUEST WITHDRAWAL'
                   )}
