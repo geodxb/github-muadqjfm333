@@ -4,7 +4,7 @@ import { CryptoExchangeService } from '../../services/cryptoExchangeService';
 import { CryptoWithdrawal, CreditCardWithdrawal } from '../../types/withdrawal';
 import { FirestoreService } from '../../services/firestoreService';
 import { Investor } from '../../types/user';
-import { useAuth } from '../../contexts/AuthContext'; // <--- ADD THIS LINE
+import { useAuth } from '../../contexts/AuthContext';
 import {
   DollarSign,
   AlertCircle,
@@ -26,7 +26,7 @@ import {
 
 interface ProWithdrawalMethodsProps {
   investor: Investor;
-  currentBalance: number; // Added currentBalance prop
+  currentBalance: number;
   onSuccess: () => void;
   onCancel: () => void;
 }
@@ -179,6 +179,43 @@ const bankFormFields: Record<string, any> = {
     currency: 'AED'
   }
 };
+
+// Enhanced country normalization function - MOVED OUTSIDE COMPONENT
+const normalizeCountryName = (rawCountry: string | undefined): string => {
+  if (!rawCountry) return 'Unknown';
+  
+  const country = rawCountry.trim();
+  
+  // Direct exact matches first (case sensitive)
+  if (banksByCountry[country]) {
+    return country;
+  }
+  
+  // Case insensitive exact matches
+  const exactMatch = Object.keys(banksByCountry).find(
+    key => key.toLowerCase() === country.toLowerCase()
+  );
+  if (exactMatch) {
+    return exactMatch;
+  }
+  
+  // Comprehensive mapping for all variations
+  const countryMappings: Record<string, string> = {
+    'mexico': 'Mexico', 'méxico': 'Mexico', 'mexican': 'Mexico', 'mx': 'Mexico', 'mex': 'Mexico',
+    'france': 'France', 'french': 'France', 'fr': 'France', 'francia': 'France',
+    'switzerland': 'Switzerland', 'swiss': 'Switzerland', 'ch': 'Switzerland', 'suisse': 'Switzerland',
+    'saudi arabia': 'Saudi Arabia', 'saudi': 'Saudi Arabia', 'ksa': 'Saudi Arabia', 'sa': 'Saudi Arabia',
+    'united arab emirates': 'United Arab Emirates', 'uae': 'United Arab Emirates', 'emirates': 'United Arab Emirates', 'dubai': 'United Arab Emirates'
+  };
+  
+  const lowerCountry = country.toLowerCase();
+  if (countryMappings[lowerCountry]) {
+    return countryMappings[lowerCountry];
+  }
+  
+  return country;
+};
+
 
 const ProWithdrawalMethods = ({ investor, currentBalance, onSuccess, onCancel }: ProWithdrawalMethodsProps) => {
   // Add this console.log to confirm the component is being rendered
@@ -450,21 +487,6 @@ const ProWithdrawalMethods = ({ investor, currentBalance, onSuccess, onCancel }:
   const previewAmount = parseFloat(amount) || 0;
   const commissionPreview = previewAmount * 0.15;
   const netAmount = previewAmount - commissionPreview;
-
-  // Enhanced country normalization function
-  const normalizeCountryName = (rawCountry: string | undefined): string => {
-    if (!rawCountry) return 'Unknown';
-    const country = rawCountry.trim();
-    const countryMappings: Record<string, string> = {
-      'mexico': 'Mexico', 'méxico': 'Mexico', 'mexican': 'Mexico', 'mx': 'Mexico', 'mex': 'Mexico',
-      'france': 'France', 'french': 'France', 'fr': 'France', 'francia': 'France',
-      'switzerland': 'Switzerland', 'swiss': 'Switzerland', 'ch': 'Switzerland', 'suisse': 'Switzerland',
-      'saudi arabia': 'Saudi Arabia', 'saudi': 'Saudi Arabia', 'ksa': 'Saudi Arabia', 'sa': 'Saudi Arabia',
-      'united arab emirates': 'United Arab Emirates', 'uae': 'United Arab Emirates', 'emirates': 'United Arab Emirates', 'dubai': 'United Arab Emirates'
-    };
-    const lowerCountry = country.toLowerCase();
-    return countryMappings[lowerCountry] || country;
-  };
 
   const renderBankForm = () => (
     <div className="space-y-6">
