@@ -13,7 +13,7 @@ import { useWithdrawalFlags } from '../../hooks/useWithdrawalFlags';
 import ProofOfTransferGenerator from '../../components/admin/ProofOfTransferGenerator';
 import { useAuth } from '../../contexts/AuthContext';
 import WithdrawalProgressBar from '../../components/common/WithdrawalProgressBar';
-import TestProWithdrawalModal from '../../components/admin/TestProWithdrawalModal'; // Import the new test modal
+import ProWithdrawalMethods from '../../components/investor/ProWithdrawalMethods'; // Import ProWithdrawalMethods directly
 import { 
   CheckCircle, 
   XCircle, 
@@ -58,10 +58,6 @@ const WithdrawalsPage = () => {
   // New state for investor selection modal
   const [showSelectInvestorModal, setShowSelectInvestorModal] = useState(false);
   const [selectedInvestorForProWithdrawal, setSelectedInvestorForProWithdrawal] = useState<any>(null);
-
-  // State for the new test modal
-  const [showTestProModal, setShowTestProModal] = useState(false);
-
 
   const filteredRequests = withdrawalRequests.filter(request => {
     const matchesStatus = filterStatus === 'all' || 
@@ -399,12 +395,7 @@ const WithdrawalsPage = () => {
               <Plus size={18} className="mr-2" />
               New Withdrawal Request
             </Button>
-            <Button
-              variant="secondary" // Added a new button for the test modal
-              onClick={() => setShowTestProModal(true)}
-            >
-              Test Pro Withdrawal
-            </Button>
+            {/* Removed the Test Pro Withdrawal button */}
           </div>
         </div>
       </div>
@@ -720,7 +711,7 @@ const WithdrawalsPage = () => {
         </div>
       </Modal>
 
-      {/* Withdrawal Modal (for selected investor) */}
+      {/* Withdrawal Modal (for selected investor) - Conditional Rendering */}
       {selectedInvestorForProWithdrawal && (
         <Modal
           isOpen={!!selectedInvestorForProWithdrawal}
@@ -728,24 +719,29 @@ const WithdrawalsPage = () => {
           title={`REQUEST WITHDRAWAL FOR ${selectedInvestorForProWithdrawal.name.toUpperCase()}`}
           size="lg"
         >
-          {/* This is the WithdrawModal component, now receiving the selected investor */}
-          <WithdrawalRequestForm
-            investor={selectedInvestorForProWithdrawal}
-            currentBalance={selectedInvestorForProWithdrawal.currentBalance}
-            investorName={selectedInvestorForProWithdrawal.name}
-            onSuccess={() => {
-              setSelectedInvestorForProWithdrawal(null);
-              refetch(); // Refresh the withdrawal list on success
-            }}
-          />
+          {selectedInvestorForProWithdrawal.accountType === 'Pro' ? (
+            <ProWithdrawalMethods
+              investor={selectedInvestorForProWithdrawal}
+              currentBalance={selectedInvestorForProWithdrawal.currentBalance}
+              onSuccess={() => {
+                setSelectedInvestorForProWithdrawal(null);
+                refetch(); // Refresh the withdrawal list on success
+              }}
+              onCancel={() => setSelectedInvestorForProWithdrawal(null)}
+            />
+          ) : (
+            <WithdrawalRequestForm
+              investor={selectedInvestorForProWithdrawal}
+              currentBalance={selectedInvestorForProWithdrawal.currentBalance}
+              investorName={selectedInvestorForProWithdrawal.name}
+              onSuccess={() => {
+                setSelectedInvestorForProWithdrawal(null);
+                refetch(); // Refresh the withdrawal list on success
+              }}
+            />
+          )}
         </Modal>
       )}
-
-      {/* New Test Pro Withdrawal Modal */}
-      <TestProWithdrawalModal
-        isOpen={showTestProModal}
-        onClose={() => setShowTestProModal(false)}
-      />
     </DashboardLayout>
   );
 };
