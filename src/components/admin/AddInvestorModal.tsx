@@ -237,7 +237,6 @@ const AddInvestorModal = ({ isOpen, onClose, onSuccess }: AddInvestorModalProps)
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-wide">
-                <User size={16} className="inline mr-1" />
                 FULL NAME *
               </label>
               <input
@@ -251,7 +250,6 @@ const AddInvestorModal = ({ isOpen, onClose, onSuccess }: AddInvestorModalProps)
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-wide">
-                <Mail size={16} className="inline mr-1" />
                 EMAIL ADDRESS
               </label>
               <input
@@ -264,7 +262,6 @@ const AddInvestorModal = ({ isOpen, onClose, onSuccess }: AddInvestorModalProps)
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-wide">
-                <Phone size={16} className="inline mr-1" />
                 PHONE NUMBER
               </label>
               <input
@@ -277,7 +274,6 @@ const AddInvestorModal = ({ isOpen, onClose, onSuccess }: AddInvestorModalProps)
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-wide">
-                <MapPin size={16} className="inline mr-1" />
                 COUNTRY *
               </label>
               <select
@@ -326,7 +322,6 @@ const AddInvestorModal = ({ isOpen, onClose, onSuccess }: AddInvestorModalProps)
           <h4 className="font-medium text-gray-800 mb-4 uppercase tracking-wide">FINANCIAL INFORMATION</h4>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-wide">
-              <DollarSign size={16} className="inline mr-1" />
               INITIAL DEPOSIT (USD) *
             </label>
             <input
